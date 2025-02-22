@@ -1,27 +1,62 @@
-        @000
-INICIO  LD N
-        JZ CASO_ZERO    ; Se N for zero, resultado é 1
-        LV 1            ; Inicializa AC com 1
-        MM RESULT       ; Armazena o resultado inicial
-        MM TEMP         ; Copia N para TEMP
+; Programa principal
+@ /0000
+LD /100    ; Carrega N no acumulador
+JZ /300    ; Se N for 0, desvia para tratar caso especial
+SC /200    ; Chama a sub-rotina para calcular fatorial
+HM /006    ; Finaliza o programa
 
-LOOP    LD TEMP        ; Carrega TEMP
-        SB UM          ; Decrementa TEMP
-        JZ FIM         ; Se TEMP for 0, termina
-        MM TEMP        ; Atualiza TEMP
-        ML RESULT      ; Multiplica pelo resultado atual
-        MM RESULT      ; Armazena o novo resultado
-        JP LOOP        ; Continua loop
+; Sub-rotina para calcular fatorial
+@ /0200
+K /0006    ; Início da sub-rotina
+LD /100    ; Carrega N no acumulador
+MM /00C    ; Armazena N em NTemp
+MM /00A    ; Armazena N em FatTemp
 
-CASO_ZERO LV 1         ; Caso especial: fatorial(0) = 1
-        MM RESULT
+@ /0208
+LD /00C    ; Carrega NTemp
+SB /008    ; Subtrai 1
+JZ /218    ; Se NTemp == 1, termina o loop
+MM /00C    ; Salva novo NTemp
+LD /00A    ; Carrega FatTemp
+ML /00C    ; Multiplica novo NTemp por FatTemp
+MM /00A    ; Atualiza FatTemp
+JP /208    ; Volta para o início do loop
 
-FIM     HM =0          ; Termina execução
+@ /0218
+LD /00A    ; FatTemp no acumulador
+MM /102    ; Armazena o resultado em 0x102
+RS /200    ; Retorna da sub-rotina
 
-        @100
-N       K /0000        ; Entrada do número
-RESULT  K /0000        ; Resultado do fatorial
-TEMP    K /0000        ; Variável temporária
+; Tratamento do caso especial N=0
+@ /0300
+LV /001    ; Carrega 1 no acumulador
+MM /102    ; Armazena em 0x102
+HM /304    ; Finaliza o programa
 
-        @390
-UM      K =1           ; Constante 1
+; Constantes e variáveis
+@ /0008
+K /0001    ; Constante para decrementar (1)
+@ /000A
+K /0001    ; Variável para armazenar o fatorial (FatTemp)
+@ /000C
+K /0001    ; Variável temporária para N durante o loop (NTemp)
+
+; Segunda abordagem de fatorial (não utilizada, mas otimizada)
+@ /0400  
+LD /001    ; Carrega 1 no acumulador
+MM /101    ; Armazena em RES (resultado inicializado com 1)
+LD /100    ; Carrega N no acumulador
+JZ /0500   ; Se N == 0, pula para FIM (fatorial de 0 é 1)
+
+@ /0410
+LD /100    ; Carrega N no acumulador
+JZ /0500   ; Se N == 0, termina
+ML /101    ; Multiplica AC por RES
+MM /101    ; Atualiza RES com o novo valor
+LD /100    ; Carrega N no acumulador
+SB /001    ; Decrementa N
+MM /100    ; Atualiza N
+JP /0410   ; Volta para LOOP
+
+@ /0500
+HM /0000   ; Finaliza
