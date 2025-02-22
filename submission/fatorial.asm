@@ -4,7 +4,7 @@ INICIO  LD VALOR     ; Carrega o valor de VALOR
         HM /000     ; Halt (termina o programa)
 
 @ /100
-VALOR   K /0005     ; Número para calcular o fatorial (exemplo: 5)
+VALOR   K /0000     ;
 RESULT  K /0000     ; Variável para armazenar o resultado
 
 @ /200
@@ -12,9 +12,8 @@ CALC_FAT K /0000    ; Sub-rotina para calcular o fatorial
         JZ CASO_ZERO ; Se VALOR for 0, pula para CASO_ZERO
         LD VALOR    ; Carrega VALOR
         MM AUX      ; Armazena VALOR em AUX
-        LD RESULT   ; Carrega RESULT (inicialmente 0)
-        AD UM       ; Adiciona 1 (inicializa RESULT com 1)
-        MM RESULT   ; Armazena o resultado em RESULT
+        LD UM       ; Carrega 1 para inicializar RESULT
+        MM RESULT   ; Armazena 1 em RESULT
 
 REPETIR LD AUX      ; Carrega AUX
         SB UM       ; Subtrai 1 de AUX
