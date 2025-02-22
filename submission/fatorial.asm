@@ -1,28 +1,35 @@
-@ /000
-INICIO  LD VALOR_N      # Carrega o valor de VALOR_N no acumulador
-        SC CALC_FATORIAL # Chama a sub-rotina CALC_FATORIAL
-FIM     HM =0           # Para a execução do programa
+; fatorial.asm
+; Calcula o fatorial de um número armazenado em 0x100 e armazena o resultado em 0x102
 
-@ /100
-VALOR_N K /0000         # Valor de N (entrada)
-RESULT  K /0000         # Resultado (saída)
+    ORG 0x100       ; Define o início do programa na posição 0x100
 
-@ /200
-CALC_FATORIAL K /0000   # Início da sub-rotina CALC_FATORIAL
-        JZ N_ZERO       # Se VALOR_N for zero, pula para N_ZERO
-        MM CONTADOR      # Armazena VALOR_N na variável CONTADOR
-        MM RESULT        # Armazena VALOR_N em RESULT (inicializa RESULT com VALOR_N)
-LOOP    LD CONTADOR      # Carrega o valor de CONTADOR no acumulador
-        SB UM            # Subtrai 1 de CONTADOR (UM = 1)
-        MM CONTADOR      # Armazena o novo valor de CONTADOR
-        JZ FIM_SUBROTINA # Se CONTADOR for zero, termina a sub-rotina
-        ML RESULT        # Multiplica RESULT por VALOR_N (acumulador contém VALOR_N)
-        MM RESULT        # Armazena o resultado em RESULT
-        JP LOOP          # Repete o loop
-N_ZERO  LV =1            # Se VALOR_N for zero, carrega 1 no acumulador
-        MM RESULT        # Armazena 1 em RESULT (0! = 1)
-FIM_SUBROTINA RS CALC_FATORIAL # Retorna da sub-rotina
+N:      DW 5        ; Armazena o número para calcular o fatorial (por exemplo, 5)
+RES:    DW 0        ; Armazena o resultado do fatorial
 
-@ /300
-UM      K =1            # Constante 1 (usada para decrementar CONTADOR)
-CONTADOR K =0           # Variável de controle do loop (contador)
+    ORG 0x000       ; Define o início do código na posição 0x000
+
+START:
+    LV N            ; Carrega o valor de N no AC
+    LD              ; Carrega o valor de N no AC
+    JZ FIM          ; Se N for 0, pula para FIM (fatorial de 0 é 1)
+    MM TEMP         ; Armazena o valor de N em TEMP
+    LV 1            ; Carrega 1 no AC
+    MM RES          ; Inicializa RES com 1
+
+LOOP:
+    LD TEMP         ; Carrega o valor de TEMP no AC
+    JZ FIM          ; Se TEMP for 0, pula para FIM
+    ML RES          ; Multiplica RES pelo valor de TEMP
+    MM RES          ; Armazena o resultado em RES
+    SB 1            ; Subtrai 1 de TEMP
+    MM TEMP         ; Armazena o novo valor de TEMP
+    JP LOOP         ; Repete o loop
+
+FIM:
+    LV 1            ; Carrega 1 no AC (fatorial de 0 é 1)
+    MM RES          ; Armazena 1 em RES
+    HM              ; Para a máquina
+
+TEMP:   DW 0        ; Variável temporária para armazenar o valor atual de N
+
+    END
