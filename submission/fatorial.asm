@@ -1,34 +1,28 @@
 @ /000
-INICIO  LD VALOR     ; Carrega o valor de VALOR
-        SC CALC_FAT  ; Chama a sub-rotina CALC_FAT
-        HM /000     ; Halt (termina o programa)
+MAIN    LD INPUT_VAL    # Carrega o valor de INPUT_VAL no acumulador
+        SC COMPUTE_FACT # Chama a sub-rotina COMPUTE_FACT
+HALT    HM =0           # Pausa a execução do programa
 
 @ /100
-VALOR   K /0000     ;
-RESULT  K /0000     ; Variável para armazenar o resultado
+INPUT_VAL K /0000       # Valor de entrada para o cálculo do fatorial
+FACT_RES K /0000        # Armazena o resultado do fatorial
 
 @ /200
-CALC_FAT K /0000    ; Sub-rotina para calcular o fatorial
-        JZ CASO_ZERO ; Se VALOR for 0, pula para CASO_ZERO
-        LD VALOR    ; Carrega VALOR
-        MM AUX      ; Armazena VALOR em AUX
-        LD UM       ; Carrega 1 para inicializar RESULT
-        MM RESULT   ; Armazena 1 em RESULT
-
-REPETIR LD AUX      ; Carrega AUX
-        SB UM       ; Subtrai 1 de AUX
-        JZ FIM      ; Se AUX for 0, termina a sub-rotina
-        MM AUX      ; Armazena o novo valor de AUX
-        LD RESULT   ; Carrega RESULT
-        ML AUX      ; Multiplica RESULT por AUX
-        MM RESULT   ; Armazena o resultado em RESULT
-        JP REPETIR  ; Repete o loop
-
-CASO_ZERO LD UM     ; Caso especial: fatorial de 0 é 1
-        MM RESULT   ; Armazena 1 em RESULT
-
-FIM     RS CALC_FAT ; Retorna da sub-rotina
+COMPUTE_FACT K /0000    # Início da sub-rotina COMPUTE_FACT
+        JZ IF_ZERO      # Se INPUT_VAL for zero, pula para IF_ZERO
+        MM COUNTER       # Armazena INPUT_VAL em COUNTER (contador)
+        MM FACT_RES      # Inicializa FACT_RES com INPUT_VAL
+FACT_LOOP LD COUNTER    # Carrega o valor de COUNTER no acumulador
+        SB ONE           # Subtrai 1 de COUNTER (ONE = 1)
+        MM COUNTER       # Atualiza o valor de COUNTER
+        JZ FACT_DONE    # Se COUNTER for zero, termina o cálculo
+        ML FACT_RES      # Multiplica FACT_RES por INPUT_VAL
+        MM FACT_RES      # Armazena o resultado em FACT_RES
+        JP FACT_LOOP    # Repete o loop
+IF_ZERO  LV =1           # Se INPUT_VAL for zero, carrega 1 no acumulador
+        MM FACT_RES      # Armazena 1 em FACT_RES (0! = 1)
+FACT_DONE RS COMPUTE_FACT # Retorna da sub-rotina
 
 @ /300
-UM      K /0001     ; Constante 1
-AUX     K /0000     ; Variável auxiliar
+ONE     K =1            # Constante 1 (usada para decrementar COUNTER)
+COUNTER K =0            # Variável de controle do loop (contador)
