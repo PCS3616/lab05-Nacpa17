@@ -1,32 +1,28 @@
         @000
-INICIO  LV 0            ; Inicializa AC com 0 (n)
-        MM N            ; Armazena n
-        MM QUADRADO     ; Inicializa quadrado de n
-        MM SOMA         ; Inicializa soma parcial
-        LV 1            ; Inicializa o primeiro ímpar (2*i + 1)
-        MM IMPAR
+INICIO  GD /000          ; Lê entrada do usuário
+        SB CONST         ; Subtrai a constante
+        MM X_D1         ; Armazena em X_D1
+        GD /000         ; Lê segunda entrada
+        SB CONST         ; Subtrai a constante
+        MM X_D2         ; Armazena em X_D2
+        LD X_D1         ; Carrega X_D1
+        MM SUM          ; Inicializa soma
+        LD X_D2         ; Carrega X_D2
+        AD SUM          ; Soma os valores
+        MM SUM          ; Armazena soma
+        JP CONTIN       ; Pula para continuação
 
-LOOP    LD QUADRADO     ; Carrega o quadrado atual
-        AD IMPAR        ; Soma o próximo ímpar
-        MM QUADRADO     ; Atualiza o quadrado
-        LD SOMA         ; Carrega a soma parcial
-        AD QUADRADO     ; Adiciona o quadrado
-        MM SOMA         ; Atualiza a soma parcial
-        LD QUADRADO     ; Armazena o quadrado na memória
-        MM 0x100+N
-        LD IMPAR        ; Carrega o próximo ímpar
-        AD 2           ; Incrementa de 2
-        MM IMPAR        ; Atualiza o valor ímpar
-        LD N            ; Carrega n
-        AD 1            ; Incrementa n
-        MM N            ; Atualiza n
-        JZ FIM          ; Se n == 64, termina
-        JP LOOP         ; Continua o loop
+        @300
+CONTIN  LD SUM          ; Carrega soma
+        AD CONST        ; Adiciona constante
+        PD /100         ; Envia para saída
+        HM /000         ; Finaliza execução
 
-FIM     HM =0           ; Halt machine
-
-        @100
-N        K /0000        ; Contador de n
-QUADRADO K /0000        ; Armazena o quadrado atual
-SOMA     K /0000        ; Soma parcial dos quadrados
-IMPAR    K /0001        ; Próximo ímpar a ser somado
+        @F00
+X_D1    K =0           ; Variável X_D1
+X_D2    K =0           ; Variável X_D2
+CONST   K =3030       ; Constante usada para conversão
+SUM     K =0           ; Variável para soma
+SUPA    K /000A       ; Valor de referência
+NORMA   K /000A       ; Valor de normalização
+VAL     K /0100       ; Valor base
